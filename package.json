@@ -1,0 +1,19 @@
+{
+  "name": "nuevo-proyecto",
+  "version": "0.0.0",
+  "description": "esta vez no la voy a cagar",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon  index.js",
+    "start": "node index.js"
+  },
+  "author": "YO",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.18"
+  },
+  "dependencies": {
+    "express": "^4.18.1",
+    "express-handlebars": "^6.0.6"
+  }
+}
