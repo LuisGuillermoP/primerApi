@@ -3,8 +3,10 @@
 
 const express = require(`express`)
 const {create} = require(`express-handlebars`)
+require("dotenv").config()
+//estas son las variables de entorno necesarias para que mongoose funcione
+require("./database/db")
 const app = express()
-const port = 5000
 const hbs = create({
     extname: ".hbs",
     partialsDir: ["views/component"]
@@ -29,8 +31,14 @@ app.get("/login",(req,res)=>{
 })
 
 app.use(express.static(__dirname + `/public`))
+app.use(express.urlencoded( {extended:true }))
 app.use("/",require("./routes/home"))
 app.use("/auth", require("./routes/auth"))
 
+
+const port = process.env.PORT || 5000
 app.listen(port , ()=> console.log("servidor andando"))
 //se tiene que configurar nodemon para que le archivos .hbs , puesto que no los lee por el mismo. Para esto se crea un archivo nodemon.json y y con la configuracion ext se elegir que tipo de archivos leera
+
+//se instalara mongoose un modulo no realcional muuy util para la coneccion a base de datos
+// tambien se instalara dotenv para gestionar las variables de entorno
