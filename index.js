@@ -4,6 +4,8 @@
 const express = require(`express`)
 const {create} = require(`express-handlebars`)
 require("dotenv").config()
+const session = require(`express-session`)
+const flash = require(`connect-flash`)
 //estas son las variables de entorno necesarias para que mongoose funcione
 require("./database/db")
 const app = express()
@@ -11,6 +13,7 @@ const hbs = create({
     extname: ".hbs",
     partialsDir: ["views/component"]
 });
+
 app.engine(".hbs",hbs.engine);
 //motor de plantilla
 app.set("view engine", ".hbs");
@@ -29,7 +32,13 @@ app.set("views","./views");
 app.get("/login",(req,res)=>{
     res.render("login")
 })
-
+app.use(session({
+    secret: `gatoman`,
+    resave: false,
+    saveUninitialized: false,
+    name: `creoq que este es un name digno`
+}))
+app.use(flash())
 app.use(express.static(__dirname + `/public`))
 app.use(express.urlencoded( {extended:true }))
 app.use("/",require("./routes/home"))

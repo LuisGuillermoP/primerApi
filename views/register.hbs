@@ -1,10 +1,12 @@
-<h1>log In</h1>
+<h1 class="text-center my-4">Register user</h1>
 
-<form action="/auth/login" method="POST">
+<form action="/auth/register" method="POST">
     <div class="row justify-content-center">
         <div class="col-md-6 ">
             <input type="text" name="userName" class="form-control mb-2" placeholder="ingrese nombre">
+            <input type="text" name="email" class="form-control mb-2" placeholder="input email">
             <input type="text" name="password" class="form-control mb-2" placeholder="password">
+            <input type="text" name="repassword" class="form-control mb-2" placeholder="repeat password">
             <button class="btn btn-primary" type="submit">Register</button>
         </div>
     </div>

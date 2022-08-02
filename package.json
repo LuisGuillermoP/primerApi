@@ -13,9 +13,14 @@
     "nodemon": "^2.0.18"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "connect-flash": "^0.1.1",
+    "connect-mongo": "^4.6.0",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "express-handlebars": "^6.0.6",
+    "express-session": "^1.17.3",
+    "express-validator": "^6.14.2",
     "mongoose": "^6.4.2",
     "nanoid": "^3.3.1"
   }

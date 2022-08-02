@@ -1,7 +1,7 @@
 {{!-- el home sirve como instrumento para ver que se va a ver dentro de la plantilla --}}
 <h1>Agregue sus URL</h1>
 {{>form}}
-{{#each url }}
+{{#each urls }}
     {{>card item=this}}
     {{!-- si queremos podemos renombrar la variable ponemos el nuevo nombre = this --}}
 {{/each}}

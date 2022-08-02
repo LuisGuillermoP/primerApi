@@ -11,6 +11,11 @@
     {{>navbar}}
     {{!-- el layout es todo aquello que se puede repetir en varias paginas --}}
     <div class="container mt-3">
+        {{#each mensajes}}
+            <div class="alert alert-dark mb-2">{{this.msg}}</div>
+        {{/each}}
+
+
         {{{body}}}
     </div>
     {{!--de esta forma voy pasandole funciones a el main ,--}}
