@@ -1,5 +1,5 @@
 const express = require("express")
-const {loginForm , registerForm, registerUser ,confirmarCuenta, loginUser } = require("../controllers/authControler")
+const {loginForm , registerForm, registerUser ,confirmarCuenta, loginUser, cerrarSesion } = require("../controllers/authControler")
 const router = express.Router()
 const {body} = require(`express-validator`)
 
@@ -27,5 +27,6 @@ router.post("/login",[
     body("password","contraseña de 6 caracteres como minimo").trim().isLength({min:6}).escape()
 ],loginUser)
 
+router.get("/logout",cerrarSesion)
 
 module.exports = router

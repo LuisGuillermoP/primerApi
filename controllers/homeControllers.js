@@ -10,25 +10,26 @@ const leerUrls =   async(req, res) => {
     // //algo importante a  decir es que si los midlewards estan mostrando una pantalla , las acciones http no vana a poder hacer nada por el hecho de que los midlewrds estan antes que las acciones . Por eso es que si vas a autilizar funciones para llamar a una pagina , fijate de no utilizar midlewards que muestren algo en pantalla
     // //desde el render podemos pasarle propiedades a el hbs para asi hacer los archivos dinamicos
     try{
-        const urls = await Url.find().lean()
+        const urls = await Url.find({user: req.user.id}).lean()
         //la funcion find sirve para ñleer lo que contiene la base de datos , y la funcion lean sirve para indicar que quiero un archivo javascript tradicional y que no se me agranden los datos , puesto que mongo tiene un tipo de archivo esoecial que tiene multiples funciones que por ahora no trabajaremos
         res.render("home", {urls})
     }catch (error){
-        console.log(error)
-        res.send('fallo algo')
+        req.flash("mensajes" ,[{msg : error.message}])
+        return res.redirect("/")
     }
 }
 
 const agregarUrl = async(req , res) =>{
     const {origin} = req.body
     try {
-        const url =  new Url({origin : origin , shortUrl : nanoid(6)})
+        const url =  new Url({origin : origin , shortUrl : nanoid(6), user: req.user.id})
         await url.save()
         //lo que realiza save es que envia la informacion a la base de datos
+        req.flash("mensaje", [{msg:"Url agregada"}])
         res.redirect('/')
     } catch {
-        console.log('error')
-        res.send('error en agregar url')
+        req.flash("mensajes" ,[{msg : error.message}])
+        return res.redirect("/")
     }
 }
 const eliminarUrl  = async(req, res) =>{
@@ -36,35 +37,52 @@ const eliminarUrl  = async(req, res) =>{
     //acordarse que params es para get y body es para post
 
     try{
-        await Url.findByIdAndDelete(id)
+        // await Url.findByIdAndDelete(id)
+        //vamos a hacerlo de un modo mas seguro
+        const url = await Url.findById()
         //le pasamos nuestro modelo
+        if(!url.user.equals(req.user.id)){
+            throw new Error("usted no es el propietario de esta url")
+        }
+        await url.remove()
+        req.flash("mensaje", [{msg:"url eliminado"}])
         res.redirect("/");
     }catch(e){
-        console.log('no se pudo eliminar')
-        res.send('error algo fallo')
+        req.flash("mensajes" ,[{msg : error.message}])
+        return res.redirect("/")
     }
 }
 const editarUrl = async(req ,res) =>{
     const {id} = req.params
+
     try {
-        const URL = await Url.findById(id).lean()
+        const url = await Url.findById(id).lean()
+        if(!url.user.equals(req.user.id)){
+            throw new Error("usted no es el propietario de esta url")
+        }
         res.render("home",{URL})
         console.log(URL)
     } catch (error) {
-        console.log(error)
-        res.send("error algo fallo")
+        req.flash("mensajes" ,[{msg : error.message}])
+        return res.redirect("/")
     }
 }
 
 const cambiarUrl = async(req ,res) =>{
     const {id} = req.params
     const {origin} = req.body
+
     try {
-        await Url.findByIdAndUpdate(id,{origin})
+        const url = await Url.findById(id).lean()
+        if(!url.user.equals(req.user.id)){
+            throw new Error("usted no es el propietario de esta url")
+        }
+        await url.updateOne({origin})
+        req.flash("mensaje", [{msg:"La url ha sido modificada"}])
         res.redirect("/")
     } catch (error) {
-        console.log(error)
-        res.send("error algo fallo")
+        req.flash("mensajes" ,[{msg : error.message}])
+        return res.redirect("/")
     }
 }
 const redireccionamiento = async(req, res) => {
@@ -74,7 +92,8 @@ const redireccionamiento = async(req, res) => {
         res.redirect(urlDB.origin)
     }
     catch(err){
-
+        req.flash("mensaje", [{msg: "no existe la url requerida"}])
+        res.render("/auth/login")
     }
 }
 

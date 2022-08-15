@@ -1,13 +1,17 @@
 /*En este proyecto trabajaremos con el modelo vista controlador , que se basa en dividir los controladores , las vistas y todo en su repectivo modulo*/
 
 
+
 const express = require(`express`)
 const {create} = require(`express-handlebars`)
 require("dotenv").config()
 const session = require(`express-session`)
 const flash = require(`connect-flash`)
+const csrf = require("csurf")
 //estas son las variables de entorno necesarias para que mongoose funcione
 require("./database/db")
+const passport =  require("passport")
+const User = require("./models/User")
 const app = express()
 const hbs = create({
     extname: ".hbs",
@@ -39,8 +43,34 @@ app.use(session({
     name: `creoq que este es un name digno`
 }))
 app.use(flash())
+app.use(passport.initialize())
+app.use(passport.session())
+passport.serializeUser((user , done) =>{
+    done(null , {id: user._id, userName: user.userName})
+})
+
+
+
+
+
+passport.deserializeUser(async(user , done)=>{
+    //es necesario revisar la base de datos en busca de ese useuario
+    const userDB = await User.findById(user._id)
+    if(!userDB) return 
+    return done(null,{id: !userDB._id, userName: !userDB.userName})
+})
 app.use(express.static(__dirname + `/public`))
 app.use(express.urlencoded( {extended:true }))
+
+
+app.use(csrf())
+app.use((req , res ,next)=>{
+    res.locals.csrfToken = req.csrfToken()
+    res.locals.mensajes = req.flash("mensajes")
+    //esto lo que hace es enviar algo cada vez que rendericemos una pagina web dentro de la base de datos 
+    next()
+})
+
 app.use("/",require("./routes/home"))
 app.use("/auth", require("./routes/auth"))
 
